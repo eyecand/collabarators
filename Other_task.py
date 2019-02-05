@@ -1,78 +1,68 @@
 import re
 import hashlib
+import os
 
 filenam = "mir.txt_hash_a914ca73703aaf4906e11d8117bbb90f"
 filename1 = "4.txt"
 
 
-myfile = open(filenam)
-myfile1 = open(filename1,mode='w')
+# myfile = open(filenam)
+# myfile1 = open(filename1,'w')
 mas = []
 new_mas = []                #создаю новый массив чтобы записать hash
-i = 0                       #счетчик
+mas_word = []
+i = 0
 #---------------------------------№4-----------------------------------
-line = myfile.read()
-looktext = r"(?!6000)(?!8209)[0-9]{4}\D{20}"
-resultlooktext = re.findall(looktext,line)
-for line in resultlooktext:
+with open('4.txt', 'w') as myfile1:
+    with open('mir.txt_hash_a914ca73703aaf4906e11d8117bbb90f','r') as file:
+        line = file.read()
+        looktext = r"(?!6000)(?!8209)[0-9]{4}\D{20}"
+        resultlooktext = re.findall(looktext,line)
+        for line in resultlooktext:
    # print(line)
-    myfile1.write(line+ "\n")
+            myfile1.write(line+ "\n")
 
-myfile.close()
-myfile1.close()
 #-----------------------------------------------------------------------
 
 #---------------------------------№1-----------------------------------
-myfile = open(filenam)
-text = (myfile.read()).split("судьба")
-for x in text:                                #записываю в массив текст после разделения
-    x = x.strip()
-    mas.append(x)
-
+with open('mir.txt_hash_a914ca73703aaf4906e11d8117bbb90f','r') as f:
+    text = (f.read()).split('судьба')
+    for line in text:
+        line = line.strip()
+        mas.append(line)
 
 print(mas)
-print("Total:")
-print (len(mas))            # проверка длины массива
+print("Total array: " + str(len(mas)))
 
 #-----------------------------------------------------------------------
 
 #---------------------------------№2-3-----------------------------------
+for i in range(0, len(mas)):
+    with open('text{}.txt'.format(i), 'w') as f:
+               f.write(mas[i])
 
-wordintext = r"[А-Яа-яA-Za-z0-9]+"
+for i in range(0,len(mas)):
+    with open('text{}.txt'.format(i), 'r') as y:
+        line1 = y.read()
+        wordintext = r"[А-Яа-яA-Za-z0-9]+"
+        res = re.findall(wordintext, line1)
+        mas_word.append(len(res))
+print(mas_word)
+
+for i in range(0,len(mas)):
+    with open("text{}.txt".format(i),'a') as fil:
+        fil.write("\n" + str(mas_word[i]))
 
 
-for i in range(1,len(mas)):                            #записываем текст из задания №1 в каждый файл
-    filename ='text{}.txt'.format(i)
-    y = open(filename, "w")
-    y.write(mas[i])
-
-
-
-                                                            #расчет количества слов и запись в массив
-mas_word = []
-for i in range(i,len(mas)):
-    filename = 'text{}.txt'.format(i)
-    y = open(filename, 'w+')
-    line1 = y.read()
-    res = re.findall(wordintext, line1)
-    mas_word.append(i)
-
-#for i in range(1,len(mas)):                             #запись количества слов в каждый файл + считаем хеш каждого файла
- #   filename = 'text{}.txt'.format(i)
-  #  y = open(filename, 'a')
- #   y.write(str(mas_word))
-
-for i in range(1,len(mas)):
-    fname = 'text{}.txt'.format(i)
-    z = open(fname, 'rb')
-    heh = hashlib.md5(z.read()).hexdigest()
-    new_mas.append(heh)
+for i in range(0,len(mas)):
+    with open('text{}.txt'.format(i),"rb") as z:
+        heh = hashlib.md5(z.read()).hexdigest()
+        new_mas.append(heh)
 
 print(new_mas)
+os.chdir(r"C:\Users\ЕГОР\PycharmProjects\new1\venv")
+for i in range(0, len(mas)):
+    old_file = os.path.join(r"C:\Users\ЕГОР\PycharmProjects\new1\venv", "text{}.txt".format(i))
+    new_file = os.path.join(r"C:\Users\ЕГОР\PycharmProjects\new1\venv", "text.txt_hash_{}".format(new_mas[i]))
+    os.rename(old_file, new_file)
 
-for i in range(1, len(mas)+1):                                  #меняю название файла
-    filename = 'text{0}.txt_hash_{1}'.format(i,new_mas[i])
-    y = open(filename, "w")
-    y.write(mas[i])
-
-myfile.close()
